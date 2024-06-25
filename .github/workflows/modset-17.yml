@@ -21,18 +21,24 @@ jobs:
         export DB_PASSWORD=postgres
         export DB_DATABASE=postgres
         ( java -jar -Dstorage=postgres target/mod-settings-fat.jar > log ) &
-    - run: |
-        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku -HContent-type:application/json -d '{"module_to": "mod-settings-1.0.3"}' \
-             localhost:8081/_/tenant | tee out
-    - run: |
+    - name: enable diku tenant
+      run: |
+        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku -HContent-type:application/json \
+             -d '{"module_to": "mod-settings-1.0.3"}' localhost:8081/_/tenant | tee out
         LOCATION=`cat out | grep -i "^Location: " | cut -d" " -f 2 | tr -d "\n\r"`
         curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku localhost:8081$LOCATION?wait=30000
+    - name: add record to /settings/entries
+      run: |
+        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
+            '-HX-Okapi-Permissions:["mod-settings.entries.item.post", "mod-settings.global.write.mod-circulation"]' \
+             -HContent-Type:application/json \
+             -d '{ "id":"1e01066d-4bee-4cf7-926c-ba2c9c6c0001", \
+                   "scope": "mod-circulation", \
+                   "key":"checkoutLockFeature", \
+                   "value":"{\"checkOutLockFeatureEnabled\":true,\"noOfRetryAttempts\":25,\"retryInterval\":250,\"lockTtl\":2500}" \
+                 }' localhost:8081/settings/entries
     - run: |
-        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
-    - run: sleep 61
-    - run: |
-        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
-    - run: sleep 61
-    - run: |
-        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
+        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
+            '-HX-Okapi-Permissions:["mod-settings.entries.item.get", "mod-settings.global.read.mod-circulation"]' \
+             localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
     - run: cat log
