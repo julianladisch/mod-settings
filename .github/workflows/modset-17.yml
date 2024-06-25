@@ -13,7 +13,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - run: mvn -B package -DskipTests --file pom.xml
+    - run: mvn -B install -DskipTests
     - run: |
         export DB_HOST=127.0.0.1
         export DB_PORT=5432
