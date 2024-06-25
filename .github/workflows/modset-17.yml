@@ -5,7 +5,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-    - run: docker run -e POSTGRES_PASSWORD=postgres -p 5433:5432 -d postgres:12-alpine
+    - run: docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:12-alpine
     - uses: actions/checkout@v4
     - name: Set up JDK 17
       uses: actions/setup-java@v3
