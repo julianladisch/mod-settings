@@ -20,7 +20,7 @@ jobs:
         export DB_USERNAME=postgres
         export DB_PASSWORD=postgres
         export DB_DATABASE=postgres
-        ( java -jar -Dstorage=postgres target/target/mod-settings-far.jar > log ) &
+        ( java -jar -Dstorage=postgres target/mod-settings-far.jar > log ) &
     - run: >
         curl -w"\n" -D - -HX-Okapi-Tenant:diku -HContent-type:application/json -d '{"module_to": "mod-settings-1.0.3"}'
              localhost:8081/_/tenant | tee out
