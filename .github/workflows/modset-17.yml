@@ -32,11 +32,8 @@ jobs:
         curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
             '-HX-Okapi-Permissions:["mod-settings.entries.item.post", "mod-settings.global.write.mod-circulation"]' \
              -HContent-Type:application/json \
-             -d '{ "id":"1e01066d-4bee-4cf7-926c-ba2c9c6c0001", \
-                   "scope": "mod-circulation", \
-                   "key":"checkoutLockFeature", \
-                   "value":"{\"checkOutLockFeatureEnabled\":true,\"noOfRetryAttempts\":25,\"retryInterval\":250,\"lockTtl\":2500}" \
-                 }' localhost:8081/settings/entries
+             -d '{ "id":"1e01066d-4bee-4cf7-926c-ba2c9c6c0001", "scope": "mod-circulation", "key":"checkoutLockFeature", "value":"{\"checkOutLockFeatureEnabled\":true,\"noOfRetryAttempts\":25,\"retryInterval\":250,\"lockTtl\":2500}" }' \
+             localhost:8081/settings/entries
     - run: |
         curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
             '-HX-Okapi-Permissions:["mod-settings.entries.item.get", "mod-settings.global.read.mod-circulation"]' \
