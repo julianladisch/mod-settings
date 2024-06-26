@@ -8,7 +8,7 @@ jobs:
     - run: docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:12-alpine
     - uses: actions/checkout@v4
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -34,14 +34,12 @@ jobs:
              -HContent-Type:application/json \
              -d '{ "id":"1e01066d-4bee-4cf7-926c-ba2c9c6c0001", "scope": "mod-circulation", "key":"checkoutLockFeature", "value":"{\"checkOutLockFeatureEnabled\":true,\"noOfRetryAttempts\":25,\"retryInterval\":250,\"lockTtl\":2500}" }' \
              localhost:8081/settings/entries
-    - run: |
-        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
-            '-HX-Okapi-Permissions:["mod-settings.entries.item.get", "mod-settings.global.read.mod-circulation"]' \
-             localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
+    - name: install k6
+      run: |
+        curl https://github.com/grafana/k6/releases/download/v0.47.0/k6-v0.47.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+        npm install
+    - run: ./k6 run .github/workflows/test.js
     - run: sleep 61
-    - run: |
-        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
-            '-HX-Okapi-Permissions:["mod-settings.entries.item.get", "mod-settings.global.read.mod-circulation"]' \
-             localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
+    - run: ./k6 run .github/workflows/test.js
     - run: sleep 5
     - run: cat log
