@@ -37,7 +37,7 @@ jobs:
     - name: install k6
       run: |
         curl -w"\n" -sS https://github.com/grafana/k6/releases/download/v0.52.0/k6-v0.52.0-linux-amd64.tar.gz -L -o k6.tgz
-        tar -xz --strip-components 1 k6.tgz
+        tar -xz --strip-components 1 -f k6.tgz
         npm install
     - run: ./k6 run --vus 10 --duration 10s .github/workflows/test.js
     - run: sleep 61
