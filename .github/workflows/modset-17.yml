@@ -38,4 +38,10 @@ jobs:
         curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
             '-HX-Okapi-Permissions:["mod-settings.entries.item.get", "mod-settings.global.read.mod-circulation"]' \
              localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
+    - run: sleep 61
+    - run: |
+        curl -w"\n" -sS -D - -HX-Okapi-Tenant:diku \
+            '-HX-Okapi-Permissions:["mod-settings.entries.item.get", "mod-settings.global.read.mod-circulation"]' \
+             localhost:8081/settings/entries?query=scope%3D%3D%22mod-circulation%22%20and%20key%3D%3D%22checkoutLockFeature%22
+    - run: sleep 5
     - run: cat log
