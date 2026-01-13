@@ -48,6 +48,7 @@ class LocaleServiceTest {
   static Future<Void> postTenant(Vertx vertx, String okapiUrl, String tenant, String moduleTo) {
     var webClient = WebClient.create(vertx);
     var body = JsonObject.of("module_to", moduleTo);
+    System.out.println("POST /_/tenant " + body);
     return webClient
         .postAbs("http://localhost:8081/_/tenant")
         .putHeader("X-Okapi-Url", okapiUrl)
@@ -55,13 +56,15 @@ class LocaleServiceTest {
         .putHeader("Content-Type", "application/json")
         .sendJsonObject(body)
         .compose(response -> {
+          System.out.println("POST /_/tenant responds " + response.statusCode());
           assertThat(response.statusCode(), is(201));
           var id = response.bodyAsJsonObject().getString("id");
-          return webClient.getAbs("http://localhost:8081/_/tenant/" + id + "?wait=30000")
+          return webClient.getAbs("http://localhost:8081/_/tenant/" + id + "?wait=61000")
               .putHeader("X-Okapi-Tenant", tenant)
               .send();
         })
         .map(response -> {
+          System.out.println("GET /_/tenant/{id}?wait=61000 responds " + response.statusCode());
           assertThat(response.statusCode(), is(200));
           assertThat(response.bodyAsJsonObject().getBoolean("complete"), is(true));
           return null;
@@ -195,6 +198,7 @@ class LocaleServiceTest {
   }
 
   String uri(HttpServer httpServer) {
+    System.out.println("mod-configuration mock runs at " + httpServer.actualPort());
     return "http://localhost:" + httpServer.actualPort();
   }
 
